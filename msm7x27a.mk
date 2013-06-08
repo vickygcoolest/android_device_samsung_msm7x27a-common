@@ -16,6 +16,7 @@ DEVICE_PACKAGE_OVERLAYS += device/samsung/msm7x27a-common/overlay
 
 ## Video
 PRODUCT_PACKAGES += \
+	libI420colorconvert \
     libstagefrighthw \
     libmm-omxcore \
     libOmxCore
@@ -28,14 +29,10 @@ PRODUCT_PACKAGES += \
 
 ## Misc.
 PRODUCT_PACKAGES += \
+	DeviceParts \
     make_ext4fs \
     setup_fs \
     com.android.future.usb.accessory
-
-## Bluetooth
-PRODUCT_PACKAGES += \
-    hciconfig \
-    hcitool
 
 ## Audio
 PRODUCT_PACKAGES += \
@@ -47,10 +44,8 @@ PRODUCT_PACKAGES += \
 
 ## Other hardware
 PRODUCT_PACKAGES += \
-    camera.msm7x27a \
     lights.msm7x27a \
-    gps.msm7x27a \
-    power.msm7x27a
+    gps.msm7x27a
 
 ## Permissions
 PRODUCT_COPY_FILES += \
@@ -76,11 +71,15 @@ PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/rootdir/init.qcom.usb.rc:root/init.qcom.usb.rc \
     device/samsung/msm7x27a-common/rootdir/ueventd.qcom.rc:root/ueventd.qcom.rc \
     device/samsung/msm7x27a-common/rootdir/fstab.qcom:root/fstab.qcom
-   
-## Bluetooth
+
+## Recovery
 PRODUCT_COPY_FILES += \
-    device/samsung/msm7x27a-common/prebuilt/etc/init.qcom.bt.sh:/system/etc/init.qcom.bt.sh \
-    system/bluetooth/data/main.le.conf:system/etc/bluetooth/main.conf
+    device/samsung/msm7x27a-common/recovery/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
+    device/samsung/msm7x27a-common/recovery/postrecoveryboot.sh:recovery/system/bin/postrecoveryboot.sh
+
+## Bluetooth
+#PRODUCT_COPY_FILES += \
+#    device/samsung/msm7x27a-common/prebuilt/etc/init.qcom.bt.sh:/system/etc/init.qcom.bt.sh
 
 ## Network
 PRODUCT_COPY_FILES += \
@@ -117,6 +116,7 @@ PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/usr/idc/sec_touchscreen.idc:system/usr/idc/sec_touchscreen.idc
 
 ## This is an MDPI device
+PRODUCT_AAPT_CONFIG := normal mdpi hdpi
 PRODUCT_AAPT_PREF_CONFIG := mdpi
 
 ## Other
@@ -124,6 +124,14 @@ PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=2
 PRODUCT_TAGS += dalvik.gc.type-precise
 
 $(call inherit-product, build/target/product/full.mk)
-$(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)
 $(call inherit-product, vendor/samsung/msm7x27a-common/blobs.mk)
 $(call inherit-product, device/common/gps/gps_eu_supl.mk)
+
+## Dalvik VM
+PRODUCT_PROPERTY_OVERRIDES += \
+    dalvik.vm.heapstartsize=5m \
+    dalvik.vm.heapgrowthlimit=32m \
+    dalvik.vm.heapsize=96m \
+    dalvik.vm.heaptargetutilization=0.75 \
+    dalvik.vm.heapminfree=512k \
+    dalvik.vm.heapmaxfree=2m
